@@ -47,7 +47,43 @@ Tip: Use the `pylint` package to check your code on formatting and errors.
 Examples:
 
 ```python
+# Hmmm, the logging interface breaks the snake_case rules!
+logger = logging.getLogger(__name__)
 
+# The name tmp is not very descriptive; what kind of data is involved here?
+tmp = pd.read_csv("data.csv")
+
+# Same, might want to add some description: survey_df, transaction_df, etc.
+df = pd.read_csv("data.csv")
+
+# If the function handles all kinds of data, maybe df is descriptive enough...
+def fill_missings(df):
+    ...
+
+# Use an underscore to distinguish from the built-in min() function.
+# Note: Not using an underscore will mask the built-in function in your namespace.
+min_ = df["date"].min()
+
+# Protected / private attributes in a class
+class Dog:
+
+    # Special function: Object constructor
+    def __init__(self, name):
+        self._name = name
+        self.__secret = name[::-1]
+
+    # Special function: String representation of the object
+    def __repr__(self):
+        return f"Dog(\"{self._name}\")"
+
+pluto = Dog("Pluto")
+
+# Works, but acesses a private property.
+# Note: Authors may change these properties without notice.
+pluto._name
+
+# Throws an attribute error
+pluto.__secret
 ```
 
 Tip: Learn to use tab completion when you are using longer variable names.
@@ -104,11 +140,47 @@ def mean_fill_numeric(df):
     """
 
     ...
+
+
+# Exmaple of a class docstring
+class Dog:
+    """Dog class for demonstration purposes.
+
+    Class docstrings should list the constructor arguments under
+    the Parameters section.
+
+    In addition, they can also have an
+    Attributes and Methods section. These sections should only list
+    *public* attributes and methods.
+
+    Parameters
+    ----------
+    name : str
+        Name for the dog.
+
+    Methods
+    -------
+    bark()
+        Prints a message to the terminal.
+    """
+
+    def __init__(self, name):
+        self._name = name
+        self.__secret = name[::-1]
+
+    def bark(self):
+        """Prints a message to the terminal."""
+        print(f"{self.name} says WOOF!")
 ```
+
+See also:
+
+- <https://numpydoc.readthedocs.io/en/latest/format.html>
+- <https://realpython.com/documenting-python-code/>
 
 Tip: Tools like Sphinx can automatically convert your docstrings into a documentation website.
 
-### Use comments wisely
+### Use comments effectively
 
 The goal of comments is to explain **why** you made certain choices in your code. The **how** should be apparent from the code itself and should not require additional explanation.
 
@@ -131,6 +203,10 @@ df = pd.read_csv("data_scv", encoding="Windows-1252", decimal=",", sep=";")
 # Data are centered, so 0 effectively mean fills
 df = df.fillna(0)
 ```
+
+Comments can also be handy while designing and structuring your code; you can start by creating functions (and/or classes) and writing down their intended functionality in comments. When you are happy with the structure, you can start with replacing the comments by actual code.
+
+See also: <https://realpython.com/python-comments-guide/>
 
 ## Principles
 
@@ -168,7 +244,7 @@ Therefore it is a good idea to separate different concerns of your project into 
 - Split different tasks (ex. read files, clean data, engineer features, build a model) into separate modules and / or classes.
 - Split different steps (ex. fill missings, convert data types) into separate functions
 - Add (at least) a single-line docstring to all your classes / methods / functions summarizing the concern the object is supposed to address.
-- Is it hard to summarize the functionality in a single line? Reconsider whether your separation of concerns is fine grained enough.
+- Is it hard to summarize the functionality in a single line? Reconsider your separation of concerns and whether it is fine grained enough.
 
 ### Simple is better than complex
 
@@ -239,7 +315,25 @@ What do you think `raw_df` will look like at the end of this script? The answer 
 
 ### Use version control (git)
 
-Make sure that the essential parts of your code are always under version control. Git is the most common tool for implementing version control; it allows you to track all changes to your source code (or any text file). Note that changes to binary files are not tracked effectively, so try to avoid binary files whenever possible.
+Make sure that the essential parts of your code are always under version control. Git is the most common tool for implementing version control; it allows you to track all changes to your source code (or any text file). Note that changes to binary files are not tracked effectively, so try to *avoid binary files* whenever possible.
+
+For a quick intro on how to use git see:
+
+- <https://www.freecodecamp.org/news/what-is-git-and-how-to-use-it-c341b049ae61/>
+- <https://www.codecademy.com/learn/learn-git>
+
+Even if you are the only person working on a project, git helps you track changes and allows you to go back to a previous version of your work easily. In this scenario, it is OK to just work on a single branch (usually `master`) to keep track of your changes.
+
+If you are collaborating with others on a project, it is good practice to create your own `feature branch` to keep track of your changes. This prevents your changes from interfering with those made by other data scientist. Once you `merge` your branch into the `master` branch you need to resolve any conflicts.
+
+A `pull request` is a nice way to perform a merge; it allows you to add descriptive information on the functionality you have added. It also allows you to add reviewers; a reviewer can check the quality and functionality of your code before merging it.
+
+To sum up:
+
+- Always use version control when writing code.
+- Use branches when collaborating with others on the same project.
+- Use pull requests when merging your branch into the master branch.
+- Use descriptive names for your commits and branches.
 
 ### Logging beats printing
 
@@ -276,6 +370,10 @@ except ValueError:
 ```
 
 ### Packaging
+
+The best way to distribute a python project is to wrap it up as a package. A package includes your code, but also its dependencies on other python packages.
+
+Tip: the `cookiecutter` package can help you setup your package very easily.
 
 ### Testing, testing
 
