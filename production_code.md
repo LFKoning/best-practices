@@ -22,6 +22,16 @@ To sum up:
 - Use pull requests when merging your branch into the master branch.
 - Use descriptive names for your commits and branches.
 
+## Packaging
+
+The best way to distribute a python project is to wrap it up as a package. A package includes your code, but also its dependencies on other python packages.
+
+Tip: the `cookiecutter` package can help you setup your package very easily.
+
+## Documentation
+
+<https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#links>
+
 ## Logging beats printing
 
 Incorporating logging into your code really helps others understand what is going on when running your code. Logging has numerous advantages over simply printing output to the screen:
@@ -55,16 +65,6 @@ except ValueError:
     logger.exception(f"Cannot convert x to float: value {x} is not numeric.")
     raise
 ```
-
-## Packaging
-
-The best way to distribute a python project is to wrap it up as a package. A package includes your code, but also its dependencies on other python packages.
-
-Tip: the `cookiecutter` package can help you setup your package very easily.
-
-## Documentation
-
-<https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#links>
 
 ## Testing, testing
 
