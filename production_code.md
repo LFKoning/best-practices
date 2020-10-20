@@ -1,4 +1,4 @@
-# Production-level Code
+# Production Code
 
 ## Use version control (git)
 
@@ -30,7 +30,17 @@ Tip: the `cookiecutter` package can help you setup your package very easily.
 
 ## Documentation
 
-<https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet#links>
+Provide proper documentation for your project; at least include a `README.md` in the main folder of your project describing:
+
+- The goal of the project
+- The most important design choices (ex. model type)
+- The project's high level structure (ex. folder / module structure)
+- How to install and use the code
+- Links to relevant additional resources or references
+
+The documentation should be written in Markdown, which is an easy to learn markup language. There are a few different dialects, but the basics are all the same. For a cheat sheet see:
+
+<https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet>
 
 ## Logging beats printing
 
