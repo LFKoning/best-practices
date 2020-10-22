@@ -153,11 +153,34 @@ df[
 ]
 ```
 
-Note: you can also use the `query` method instead:
+Note: you can also use the `query` method instead if you prefer:
 
 <https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.query.html>
 
-## In place or not
+## In place changes
+
+Changes to a DataFrame can be made in place (on the frame itself) or on a copy. Take a look at these examples:
+
+```python
+import datetime as dt
+
+
+def read_data(path):
+    """Read CSV data from path."""
+
+    df = pd.read_csv(path)
+    df["timestamp"] = dt.now()
+    df.fillna(0, inplace=True)
+
+
+def prep_data(df):
+    """Prepare the data."""
+
+    df["timestamp"] = dt.now()
+    df.fillna(0, inplace=True)
+
+    return df
+```
 
 ## Method chaining
 
