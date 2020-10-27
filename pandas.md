@@ -5,6 +5,8 @@ This document gives some tips and tricks to effectively use pandas data frames. 
 ```python
 import numpy as np
 import pandas as pd
+import datetime as dt
+
 
 df = pd.DataFrame({
     "x": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -159,34 +161,94 @@ Note: you can also use the `query` method instead if you prefer:
 
 ## In place changes
 
-Changes to a DataFrame can be made in place (on the frame itself) or on a copy. Take a look at these examples:
+Take a look at this example:
 
 ```python
-import datetime as dt
-
-
-def read_data(path):
-    """Read CSV data from path."""
-
-    df = pd.read_csv(path)
-    df["timestamp"] = dt.now()
-    df.fillna(0, inplace=True)
-
-
 def prep_data(df):
     """Prepare the data."""
 
-    df["timestamp"] = dt.now()
+    df["timestamp"] = dt.datetime.now()
     df.fillna(0, inplace=True)
 
     return df
 ```
 
+Suppose you would call the function like this: `df_clean = prep_data(df_raw)`. What would you expect `df_raw` to look like?
+
+The answer might supprise you; it looks the same as `df_clean`! The reason is that the `prep_data` function makes changes directly to the provided DataFrame!
+
+Making changes "in place" is generally a bad idea, especially in a function or method. Users typically do not expect that the DataFrame they provide gets changes along the way.
+
+So how can we improve the function, look at this example:
+
+```python
+def prep_data(df):
+    """Prepare the data."""
+
+    df = df.assign(timestamp=dt.datetime.now())
+    df = df.fillna(0)
+
+    return df
+```
+
+Most DataFrame methods automatically create and return a copy of the DataFrame. So switching to the `assign` method made sure that the original DataFrame stays as-is. Same goes for the `fillna` method, from which we removed the `inplace=True` argument. Now the function works much more as you would expect!
+
 ## Method chaining
+
+In the example above we see two lines starting with `df = df.<method>`; surely there has to be a more efficient way to write this down? There is and it is called "method chaining". Here is an updated example for the `prep_data` function:
+
+```python
+def prep_data(df):
+    """Prepare the data."""
+
+    return (
+        df
+        .assign(timestamp=dt.datetime.now())
+        .fillna(0)
+    )
+```
+
+Looks much cleaner! The DataFrame is passed along each step in the chain and methods are executed on it one after the other.
+
+There are a few caveats though, take a look at this code:
+
+```python
+df.assign(
+    a=np.random.normal(0, 1, df.shape[0]),
+    b=df["a"] ** 2,
+)
+```
+
+This will fail because the original DataFrame does not contain column `a`; the assignment has not yet taken place. Perhaps this helps:
+
+```python
+df = (
+    df
+    .assign(a=np.random.normal(0, 1, df.shape[0])
+    .assign(b=df["a"] ** 2)
+)
+```
+
+This will still fail: `df` in the second assign statement refers to the original DataFrame. This does not get updated until the entire chain of methods has finished. Only then the result is assigned to `df`...
+
+This works though:
+
+```python
+df = (
+    df
+    .assign(a=np.random.normal(0, 1, df.shape[0])
+    .assign(b=lambda df: df["a"] ** 2)
+)
+```
+
+The `lambda` function assigns the DataFrame returned from the previous step (where the `a` columns was created) to the `df` variable.
 
 ## Avoid loops
 
-See also:
+Looping over the rows or columns of a DataFrame is typically slow; pandas is made to perform computations on entire columns or subsets. Whenever you are tempted to use a loop, rethink the problem to see if there is not a more efficient solution.
+
+## See also
 
 - [Modern Pandas blog post](https://tomaugspurger.github.io/modern-1-intro.html)
 - [Making Pandas Fly](https://www.youtube.com/watch?v=N4pj3CS857c)
+- [Efficient looping](https://medium.com/swlh/how-to-efficiently-loop-through-pandas-dataframe-660e4660125d)
