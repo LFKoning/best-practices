@@ -44,13 +44,13 @@ The documentation should be written in Markdown, which is an easy to learn marku
 
 ## Logging beats printing
 
-Incorporating logging into your code really helps others understand what is going on when running your code. Logging has numerous advantages over simply printing output to the screen:
+Incorporating logging into your code really helps others understand what is going on when running your code. Logging has numerous advantages over simply printing output to the terminal:
 
 1. Logging allows the user to determine where the logs go to, printing only goes to the terminal.
-2. Logging implements different levels (ex. `ERROR`, `WARNING`, `INFO`, `DEBUG`), printing does not allow such differentiation.
+2. Logging allows you to use different levels (ex. `ERROR`, `WARNING`, `INFO`, `DEBUG`), printing does not allow such differentiation.
 3. Logs are formatted in a nice and consistent manner.
 
-It is easy to incorporate logging into your code:
+It is very easy to incorporate logging into your code, here are some examples:
 
 ```python
 # Import the logging module into your codebase
@@ -76,6 +76,39 @@ except ValueError:
     raise
 ```
 
+On a more technical level, the logging process roughly works like this:
+
+1. A logging function is called on a `Logger` (ex. `info`)
+2. The `Logger` checks whether it is enabled for that level (ex. level is `DEBUG`).
+3. If so, the `Logger` emits a `LogRecord` for the log message.
+4. `Handler`s attached to the `Logger` pick up the `LogRecord`.
+5. Each `Handler` checks whether it is enabled for the level of the `LogRecord`.
+6. If so, the `Handler` formats the `LogRecord` using a `Formatter`.
+7. Finally, the `Handler` prints the message or stores it to a file.
+
+For a more detailed, graphical schema of this flow click here: [python logging flow](https://docs.python.org/3/_images/logging_flow.png)
+
+A more elaborate example, that logs to a file in a custom format looks like this:
+
+```python
+# Create and configure the logger
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+
+# Create file handler and custom formatter
+file_handler = logging.FileHandler("log_messages.csv")
+file_formatter = logging.Formatter(
+    fmt="%(asctime)s,%(levelname)s,%(pathname)s,%(lineno)d,%(name)s,%(message)s"
+)
+
+# Attach formatter to handler and handler to logger
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
+
+# Log a test message
+logger.info("Test logging message")
+```
+
 ## Testing, testing
 
 The `pytest` package allows you to implement unit tests for your code. Unit tests are really important for the maintainability of your code; tests guard against unexpected or unwanted changes in functionality.
@@ -88,3 +121,66 @@ Some tips for creating unit tests:
 - Give descriptive names to your test functions, ex: `test_value_error_on_non_numeric()`.
 - Data sets can be supplied either as a fixture or as a file.
 - Use parametrization if you need to run the same test on different inputs.
+
+For example, let's take this function:
+
+```python
+def diff_series(ts, lag=1):
+    """Computes lagged difference of a time-series."""
+
+    if not isinstance(ts, pd.Series):
+        raise ValueError("Time series should be a pandas Series object.")
+
+    if not ts.dtype in ["int64", "float64"]:
+        raise ValueError(f"Time series must be numeric, got {ts.dtype} instead.")
+
+    try:
+        lag = int(lag)
+    except ValueError:
+        raise ValueError("Lag should be provided as an integer.")
+
+    return ts.diff(lag)
+```
+
+And write some tests for it:
+
+```python
+import pytest
+
+
+class TestDiffSeries:
+    """Test class to group up all our diff_series tests."""
+
+    sample_ts = pd.Series([1, 2, 4, 2, 3])
+
+    def test_error_no_series(self):
+        """Tests ValueError is raised when time-series is not numeric."""
+
+        with pytest.raises(ValueError):
+            diff_series(pd.Series(["1", "2", "3", "4"]))
+
+    def test_error_no_int_lag(self):
+        """Tests ValueError is raised when lag is not provided as int."""
+
+        with pytest.raises(ValueError):
+            diff_series(self.sample_ts, "A")
+
+    @pytest.mark.parametrize(
+        "lag, expected",
+        [
+            (1, pd.Series([np.nan, 1, 2, -2, 1])),
+            (2, pd.Series([np.nan, np.nan, 3, 0, -1])),
+            (-1, pd.Series([-1, -2, 2, -1, np.nan]))
+        ],
+        ids=["lag 1", "lag 2", "lead 1"]
+    )
+    def test_lags(self, lag, expected):
+        """Tests different lags on self.sample_ts."""
+
+        result = diff_series(self.sample_ts, lag)
+        pd.testing.assert_series_equal(result, expected)
+```
+
+Maybe you can come up with a few more edge cases for properly testing this function? For example, what should happen when the time series is empty? Should the function return an empty series or should you throw an error or warning? What if the lag is larger than the length of the series?
+
+When you are designing tests, you might also discover edge cases that you did not think of when designing your function. That is why writing tests is so useful!

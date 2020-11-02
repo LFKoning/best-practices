@@ -213,9 +213,12 @@ Looks much cleaner! The DataFrame is passed along each step in the chain and met
 There are a few caveats though, take a look at this code:
 
 ```python
-df.assign(
-    a=np.random.normal(0, 1, df.shape[0]),
-    b=df["a"] ** 2,
+df = (
+    df
+    .assign(
+        a=np.random.normal(0, 1, df.shape[0]),
+        b=df["a"] ** 2,
+    )
 )
 ```
 
