@@ -24,9 +24,32 @@ To sum up:
 
 ## Packaging
 
-The best way to distribute a python project is to wrap it up as a package. A package includes your code, but also its dependencies on other python packages.
+The best way to distribute a python project is to wrap it up as a package. Notable advantages of creating a package are:
 
-Tip: the `cookiecutter` package can help you setup your package very easily.
+1. A package provides a neat way to structure your project.
+2. A package is installed and does not need to reside inside your working directory.
+3. A package can include dependencies; other packages it relies on to function properly.
+4. Different dependencies can be specified for development and production environments.
+
+Now that the advantages of packages are clear, let's take a look at their most basic structure:
+
+```text
+src/
+tests/
+setup.py
+```
+
+The `cookiecutter` package can help you setup your package very easily, to install it type:
+
+```bash
+pip install cookiecutter
+```
+
+Once installed, you can quickly create the structure for your project using a template like so:
+
+```bash
+cookiecutter <template>
+```
 
 ## Documentation
 

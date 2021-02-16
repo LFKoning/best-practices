@@ -100,3 +100,53 @@ processed_df = mean_fill(raw_df)
 ```
 
 What do you think `raw_df` will look like at the end of this script? The answer might suprise you; it looks the same as `processed_df`! What happens is that `raw_df` gets changed "in place" in the `mean_fill()` function and will therefore also have its missing values imputed. A user will probably not expect this implicit behavior, so it is best avoided.
+
+## Fail Fast
+
+Direct feedback trumps delayed feedback, so try to report on errors as fast as possible. Take look at these two implementations of a `DataReader` class:
+
+```python
+class DataReader:
+    """
+    Reads and processes data files.
+
+    Parameters
+    ----------
+    path : str
+        Path the data file.
+    """
+
+    def __init__(self, path):
+        self._path = path
+
+    def read(self):
+        """Reads the data and returns it as a pandes DataFrame."""
+
+        return pd.read_csv(self._path)
+```
+
+If the file provided by `path` does not exist, the user of your class will not find out until the `read()` method is called. The user then needs to go back to the construction of the object to fix the problem...
+
+A better approach might be:
+
+```python
+class DataReader:
+    """
+    Reads and processes data files.
+
+    Parameters
+    ----------
+    path : str
+        Path the data file.
+    """
+
+    def __init__(self, path):
+        self._data = pd.read_csv(self._path)
+
+    def read(self):
+        """Returns the data as a pandes DataFrame."""
+
+        return self._data
+```
+
+The loading now happens in the constructor. Therefore, if an error occurs the user will get an error straight away!
