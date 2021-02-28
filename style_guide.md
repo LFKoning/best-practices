@@ -68,9 +68,11 @@ Note that `black` sometimes has a different opinion on how long lines should be 
 
 ## Use descriptive names
 
-- Give your variables, functions and classes descriptive names.
-- A name should describe the value or functionality as brief and accurate as possible.
-- Avoid single-letter names, unless it's extremely obvious what they refer to (ex. math / statistical symbol).
+Give your variables, functions and classes descriptive names. A name should describe the value or functionality as brief and accurate as possible. For example `df_sales` provides more descriptive information than just `df`. Most IDE's have tab-completion so you can now both be lazy and use longer, descriptive names!
+
+Single-letter variables should be avoided. Only inside very short scopes (list comprehensions, single line functions, short loops) a single-letter variable is not a huge issue, as it is easy to track what it refers to. Still, there is hardly any reason not to use a more decriptive name...
+
+For functions, describe the action that takes place; `set_age`, `get_age`, `print_name`. Using a verb as the first part of the name can be helpful. For functions that check whether something is `True` or `False`, use `is`: `is_valid_age`, `is_employee`.
 
 - Use these styles for names:
   - variables: use `snake_case`

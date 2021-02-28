@@ -1,44 +1,17 @@
 # Design Principles
 
-This section describes some guiding principles to structure and improve your code. These principles are not "always do this" or "never do that" kind of rules; they are more general ideas which you should try to follow when writing code. This section describes the most important principles and illustrates their goal with one or two simple examples.
+This section describes some guiding principles to structure and improve your code. These principles are not "always do this" or "never do that" kind of rules; they are
+guidelines which you should keep in the back of your mind while writing code. This section describes the most important principles and illustrates their goal with one or two simple examples.
 
-Tip: Type `import this` in Python for more guiding principles.
+## The Zen of Python
 
-## Don't repeat yourself
-
-Repetition is typically a sign that you can implement something more efficiently; so avoid repetition. Not only does it save you work (being lazy is a good thing!), but it can also help others understand and maintain your code more easily.
-
-Example:
-
-```python
-# Repetition; inefficient and error prone
-df["col_A"] = df["col_A"].fillna(df["col_A"].mean())
-df["col_B"] = df["col_B"].fillna(df["col_B"].mean())
-df["col_C"] = df["col_C"].fillna(df["col_A"].mean())
-
-# A better approach
-for col in "col_A", "col_B", "col_C":
-    df[col] = df[col].fillna(df[col].mean()
-```
-
-The first approach is lengthy and does not make it explicit that `col_A`, `col_B` and `col_C` are all treated in the same way. It is also more error prone; did you notice the copy-paste error on the last line? Finally, it is less flexible; adding another column is more work in the first appoach compared to the second approach.
-
-To conclude; every time you notice you are repeating certain lines of code, try coming up with a more re-usable solution!
-
-## Separation of concerns
-
-A typical data science project includes many different tasks; reading data files, preparing and combining, training or applying a statistical model, et cetera. It is possible to perform all these tasks in a single Python file that runs from top to bottom; Python does not really enforce or recommend a certain structure of your code. However, putting everything into a single script will make that script very hard to maintain.
-
-Therefore it is a good idea to separate different concerns of your project into different functions, classes, and scripts (modules). Some tips:
-
-- Split different tasks (ex. read files, clean data, engineer features, build a model) into separate modules and / or classes.
-- Split different steps (ex. fill missings, convert data types) into separate functions
-- Add (at least) a single-line docstring to all your classes / methods / functions summarizing the concern the object is supposed to address.
-- Is it hard to summarize the functionality in a single line? Reconsider your separation of concerns and whether it is fine grained enough.
+Type `import this` in Python to read "The Zen of Python" by Tim Peters. It is a nice set of principles to go by! See if your code adheres to them or not.
 
 ## Simple is better than complex
 
-This one sounds easy to do, but in practice there are many pitfalls that could make your code more complex than it needs to be. For example, in an effort to reduce repetition one could create a single function to handle many different cases. The function than takes a lot of configuration parameters and a involves lots of logical steps to handle all the different cases. An example:
+Also often referred to as KISS: Keep It Simple Stupid! This one sounds easy to do, but in practice there are many pitfalls that could make your code more complex than it needs to be.
+
+For example, one could create a single function to handle many different cases. As a result, this function takes a lot of parameters and a involves many logical steps to handle all the different cases. An example:
 
 ```python
 def data_prep(df, scale=True, dummies=True, fill_num="mean", fill_cat="missing", method=None):
@@ -64,16 +37,54 @@ def prep_categorical(df, dummies=True, fill="missing"):
 
 Here are some pointers for identifying when your code may be overly complex:
 
-- Functions with many arguments, some of which are only relevant to very specific cases.
-- Functions for which it is hard to summarize its behavior in a single line.
-- Functions with many or lengthy `if ... elif ... else` statements.
+- Having a hard time summarizing the functions behavior in a single line.
+- Having functions with many arguments, some of which are only relevant to very specific cases.
+- Having functions with many or lengthy `if ... elif ... else` statements.
 
 Some tips to reduce complexity:
 
 - Split complex functions up into smaller, more specialized functions.
 - Focus on tackling a single problem in each function or class you write.
-- Do not implement functionality you do not need right now / in the foreseeable future!
-- Choose sensible defaults, hardcode whatever does not change frequently.
+- Implement only functionality that is required right now / in the foreseeable future.
+- Choose sensible defaults, hardcode things that are not expected to change frequently.
+
+## Separation of concerns
+
+Related to the topic above; complexity often arises from doing too many things in one go. A typical data science project includes many different tasks; reading data files, preparing and combining data, training machine learning models, et cetera.
+
+It is possible to perform all these tasks in a single Python script that runs from top to bottom. However, doing so will make that script very hard to read and maintain.
+
+It is therefore a good idea to separate different tasks or concerns of your project into different scripts, classes, and functions. Some tips for structuring your code:
+
+- Split different tasks (ex. reading files, cleaning data, engineering features, training models) into separate modules and / or classes.
+- Split different steps (ex. fill missings, convert data types) into separate functions
+- Add (at least) a single-line docstring to all your classes, methods, and functions summarizing the task the object is supposed to do.
+- If it is hard to come up with a single line summary; reconsider your separation of concerns and whether it is granular enough.
+
+See also:
+
+[Design Patterns](https://en.wikipedia.org/wiki/Software_design_pattern): Common design patterns for structuring your code.
+
+## Don't repeat yourself
+
+Repetition is typically a sign that you can implement something more efficiently; so avoid it. Not only does it save you work (being lazy is a good thing!), but it can also help others understand and maintain your code more easily.
+
+Example:
+
+```python
+# Repetition; inefficient and error prone
+df["col_A"] = df["col_A"].fillna(df["col_A"].mean())
+df["col_B"] = df["col_B"].fillna(df["col_B"].mean())
+df["col_C"] = df["col_C"].fillna(df["col_A"].mean())
+
+# A better approach
+for col in "col_A", "col_B", "col_C":
+    df[col] = df[col].fillna(df[col].mean()
+```
+
+The first approach is lengthy and does not make it explicit that `col_A`, `col_B` and `col_C` are all treated in the same way. It is also more error prone; did you notice the copy-paste error on the last line? Finally, it is less flexible; adding another column is more work in the first appoach compared to the second approach.
+
+To conclude; every time you find yourself repeating lines of code, try coming up with a more re-usable solution!
 
 ## Explicit is better than implicit
 
@@ -149,4 +160,4 @@ class DataReader:
         return self._data
 ```
 
-The loading now happens in the constructor. Therefore, if an error occurs the user will get an error straight away!
+The loading now happens in the constructor. Therefore, if an error occurs the user will get an error straight away! This will make it easier for the user to debug their code.
