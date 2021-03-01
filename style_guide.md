@@ -220,7 +220,7 @@ See also:
 - <https://numpydoc.readthedocs.io/en/latest/format.html>
 - <https://realpython.com/documenting-python-code/>
 
-Tip: Tools like Sphinx can automatically convert your docstrings into a documentation website.
+Tip: Tools like Sphinx can automatically convert docstrings into a documentation website.
 
 ## Use comments effectively
 

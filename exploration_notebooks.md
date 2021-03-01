@@ -2,7 +2,7 @@
 
 ## Single-purpose notebooks
 
-Try to use separate notebooks for every task in your project. For example, use a separate notebook for each dataset you are going to explore. Perhaps also use seperate notebooks for every model type you are trying. Make another notebook for comparing the final models to each other et cetera.
+Try to use separate notebooks for each task in your project. For example, use a separate notebook for each dataset you are going to explore. Perhaps also use seperate notebooks for every model type you are trying. Make another notebook for comparing the final models to each other et cetera.
 
 Using separate notebooks for different tasks ensures that notebooks do not become too lengthy and complex.
 
@@ -24,9 +24,9 @@ Example:
 
 Use descriptive names for your notebooks; do not just pile up `Untitled.ipynb` files. With separate notebooks for different tasks in your project, coming up with a good name should not be too hard.
 
-## Description on top
+## Summary on top
 
-Put a short descriptive (Markdown) cell on top of your notebook, briefly describing the goal and overall structure of the notebook.
+Use a descriptive Markdown cell on top of your notebook to briefly summarize the purpose and structure of the notebook.
 
 Example:
 
@@ -39,9 +39,9 @@ This notebook uses a simple linear model to predict a time-series of transaction
 - National holidays: obtained from the `workalendar` package.
 - Fourier series: Seasonality is modelled through fourier series.
 
-Feature selection is done using ElasticNet regularization.
+Feature selection is done using lasso regularization.
 
-Validation is done through `TimeSeriesSplit` from `scikit-learn`.
+Uses `TimeSeriesSplit` from `scikit-learn` to perform cross validation.
 ```
 
 ## Use sections
@@ -52,9 +52,9 @@ Use section headers to split up different subtasks in your notebook, for example
 
 Try to keep your notebooks as clean as possible; remove cells with code you no longer need or just used for testing. Look over your notebook code every now and then to check whether all the code is still usefull or not. If needed, make a separate section where you store code that is only used for testing or that is not / less relevant to the goal of the notebook.
 
-## Import (when available)
+## Import utility code (if available)
 
-Moving (static) code to an external file can really help in keeping your notebook clean. Methods for loading data or generating certain plots are good candidates to move to an external file or even better: an installable package.
+Moving (utility) code to an external file can really help keep your notebooks clean and readable. Methods for loading data or generating certain plots are good candidates to move to an external file or even better: an installable package.
 
 For example, take a look at the following file structure:
 
